@@ -1,0 +1,567 @@
+﻿<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>화상채팅</title>
+<script>
+    if(!location.hash.replace('#', '').length) {
+        location.href = location.href.split('#')[0] + '#' + (Math.random() * 100).toString().replace('.', '');
+        location.reload();
+    }
+</script>
+
+    <link rel="stylesheet" href="css/service.css">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+    <link href="css/evol-colorpicker.min.css" rel="stylesheet" />
+    <link id="jquiCSS" rel="stylesheet" href="http://ajax.googleapis.com/ajax/libs/jqueryui/1.12.1/themes/base/jquery-ui.css" type="text/css" media="all">
+
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+    <script src="../stylesheets/vendor/jquery-3.2.1.js"></script>
+    <script src="../stylesheets/vendor/jquery-ui.min.js"></script>
+    <script src="js/service.js"></script>
+    <script src="js/evol-colorpicker.min.js" type="text/javascript"></script>
+
+    <script src="https://cdn.webrtc-experiment.com/websocket/PeerConnection.js"> </script>
+    <script src="https://cdn.webrtc-experiment.com/view/websocket.js"> </script>
+
+    <script src="https://cdn.webrtc-experiment.com:443/getScreenId.js"></script>
+
+    <script src="https://cdn.webrtc-experiment.com/commits.js" async></script>
+
+    <script>
+        $(document).ready(function(){
+            $('#noIndColor').colorpicker({
+                displayIndicator: false
+            });
+        });
+
+        $(function() {
+            $( "#watchview" ).draggable();
+        });
+
+        function showtab(a){
+            for(i = 1 ; i <=4 ; i++){
+                var target = document.getElementById('content' + i);
+                if(i == a){
+                    target.style.display = 'block';
+                    document.getElementById("tabbtn"+i).style.backgroundColor = '#002e3f';
+                } else {
+                    target.style.display = 'none';
+                    document.getElementById("tabbtn"+i).style.backgroundColor = '#009ED8';
+                }
+            }
+        }
+
+        function watchtab(a){
+            for(i = 1 ; i <=2 ; i++){
+                var target = document.getElementById('watchcontent' + i);
+                if(i == a){
+                    target.style.display = 'block';
+                } else {
+                    target.style.display = 'none';
+                }
+            }
+        }
+
+        function volumeBtn(a){
+                var target1 = document.getElementById('volume1');
+                var target2 = document.getElementById('volume2');
+                if(a==1){
+                    target1.style.display = 'none';
+                    target2.style.display = 'inline-block';
+                }else if(a==2){
+                    target2.style.display = 'none';
+                    target1.style.display = 'inline-block';
+                }
+        }
+
+        function micBtn(a){
+                var target1 = document.getElementById('mic1');
+                var target2 = document.getElementById('mic2');
+                if(a==1){
+                    target1.style.display = 'none';
+                    target2.style.display = 'inline-block';
+                }else if(a==2){
+                    target2.style.display = 'none';
+                    target1.style.display = 'inline-block';
+                }
+        }
+
+        function videoBtn(a){
+                var target1 = document.getElementById('video1');
+                var target2 = document.getElementById('video2');
+                if(a==1){
+                    target1.style.display = 'none';
+                    target2.style.display = 'inline-block';
+                    document.getElementById("videoon_view").style.display = 'block';
+                    document.getElementById("videooff_view").style.display = 'none';
+                }else if(a==2){
+                    target2.style.display = 'none';
+                    target1.style.display = 'inline-block';
+                    document.getElementById("videooff_view").style.display = 'block';
+                    document.getElementById("videoon_view").style.display = 'none';
+                }
+        }
+
+        function watchview() {
+            var target = document.getElementById('watchview');
+            target.style.display = 'block';
+        }
+
+        function watchviewclose() {
+            var target = document.getElementById('watchview');
+            target.style.display = 'none';
+        }
+
+        function openNav() {
+            document.getElementById("mySidenav").style.width = "20%";
+            document.getElementById("wrap").style.width = "80%";
+            document.getElementById("wrap").style.marginRight = "20%";
+            document.getElementById("opensidemenu").style.display = "none";
+            document.getElementById("navout").style.display = "block";
+        }
+
+        function closeNav() {
+            document.getElementById("mySidenav").style.width = "0";
+            document.getElementById("wrap").style.marginRight = "0";
+            document.getElementById("wrap").style.width = "100%";
+            document.getElementById("opensidemenu").style.display = "block";
+            document.getElementById("navout").style.display = "none";
+        }
+
+        // Stopwatch
+        var timer, i = 0, divide = 100;
+        var check = 0;
+
+        function start(){
+             if(check == 0) {
+                timer = self.setInterval('increment()', (1000 / divide));
+                check = 1;
+                document.getElementById("start_timer").style.borderColor = "#009ED8";
+                document.getElementById("stop_timer").style.borderColor = "#FFFFFF";
+                document.getElementById("reset_timer").style.borderColor = "#FFFFFF";
+            }
+        }
+
+        function increment(){
+         i++;
+         document.getElementById('time_out').innerHTML = (i / divide);
+        }
+
+        function stop(){
+            clearInterval(timer);
+            timer = null;
+            check = 0;
+            document.getElementById("start_timer").style.borderColor = "#FFFFFF";
+            document.getElementById("stop_timer").style.borderColor = "#009ED8";
+            document.getElementById("reset_timer").style.borderColor = "#FFFFFF";
+        }
+
+        function reset(){
+            stop();
+            i = 0
+            document.getElementById('time_out').innerHTML = (i / divide);
+            document.getElementById("start_timer").style.borderColor = "#FFFFFF";
+            document.getElementById("stop_timer").style.borderColor = "#FFFFFF";
+            document.getElementById("reset_timer").style.borderColor = "#009ED8";
+        }
+    </script>
+
+
+</head>
+<body>
+    <!-- sidebar -->
+    <div id="mySidenav" class="sidenav">
+        <div class="sidecontent">
+                 <div class="userscreen">
+                    <div class="username" id="videooff_view2"></div>
+                    <div class="userview"></div>
+                </div>
+                <div class="userscreen">
+                    <div class="username" id="attend"></div>
+                    <div class="userview"></div>
+                </div>
+                <div class="userscreen">
+                    <div class="username"></div>
+                    <div class="userview"></div>
+                </div>
+                <div class="userscreen">
+                    <div class="username"></div>
+                    <div class="userview"></div>
+                </div>
+                <div class="userscreen">
+                    <div class="username"></div>
+                    <div class="userview"></div>
+                </div>
+        </div>
+    </div>
+    <!-- // -->
+
+    <!-- watch view -->
+        <div id="watchview" class="ui-widget-content">
+            <div class="watcharea">
+                <div id="watchheader">
+                    <div id="watchtabs">
+                         <ul class="nav nav-tabs">
+                            <li><a href="javascript:;" onclick="javascript:watchtab(1);" style="color:#22FF22;">Stopwatch</a></li>
+                        </ul>
+                    </div>
+                    <div id="watchclose">
+                        <a href="javascript:void(0)" onclick="watchviewclose()">&times;</a>
+                    </div>
+                </div>
+
+                <div id="watchcontent">
+                    <div id="watchcontent1">
+                        <div class="watchbox">
+                            <div class="watchshowbox">
+                                <div class="watchshowtimeleft"></div>
+                                <div class="watchshowtime">
+                                    <span id="time_out">0.00</span>
+                                </div>
+                            </div>
+                            <div class="watchbtnbox">
+                                <div class="watchbtn">
+                                    <button id="start_timer" onclick="start()">Start</button>
+                                </div>
+                                <div class="watchbtn">
+                                    <button id="stop_timer" onclick="stop()">Stop</button>
+                                </div>
+                                <div class="watchbtn">
+                                    <button id="reset_timer" onclick="reset()">Reset</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div id="watchcontent2">
+                        <div class="watchbox">
+                            <div class="watchshowbox">
+                                <div class="watchshowtimeleft">
+                                    <input type="text" style="width:100%; height:70%; color:black;" placeholder="Minutes" name="minutes" />
+                                </div>
+                                <div class="watchshowtime">
+                                    <label>00:00:00</label>
+                                </div>
+                            </div>
+                            <div class="watchbtnbox">
+                                <div class="watchbtn">
+                                    <button onclick="sw_start()">Start</button>
+                                </div>
+                                <div class="watchbtn">
+                                    <button onclick="Stop()">Stop</button>
+                                </div>
+                                <div class="watchbtn">
+                                    <button onclick="Reset()">Reset</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+
+    <!-- // -->
+
+    <div id="wrap">
+        <div id="header">
+            <div class="tabs">
+                    <span><a href="/service" target="_blank"><button id="tabbtn1">화상채팅</button></a></span>
+                    <span><a href="/service2" target="_blank"><button id="tabbtn2">화면공유</button></a></span>
+                    <!-- <span><a href="javascript:;" onclick="javascript:showtab(3);"><button id="tabbtn3">파일공유</button></a></span> -->
+                    <span><a href="http://211.253.24.236/JudgeOnline/" target="_blank"><button id="tabbtn4">컴파일러</button></a></span>
+
+                            <table id="rooms-list" style="rooms-list;"></table>
+
+            </div>
+
+            <div class="sidemenu">
+                <div id="navout">
+                   <button onclick="closeNav()" style="width:100%;"><span class="glyphicon glyphicon-remove" style="font-size:2vw;cursor:pointer"></span></button>
+                </div>
+                <div id="out">
+                    <button style="width:100%;" onclick="window.close();"><span class="glyphicon glyphicon-log-out" style="font-size:2vw;cursor:pointer"></span></button>
+                </div>
+                <div id="opensidemenu">
+                    <button onclick="openNav()" style="width:100%;"><span class="glyphicon glyphicon-user" style="font-size:2vw;cursor:pointer"></span></button>
+                </div>
+            </div>
+
+        </div>
+
+        <div id="contentbox">
+		<div id="settings">
+                     <div class="material-icons iconvisible" id="volume1" onclick="volumeBtn(1);">volume_up</div>
+                     <div class="material-icons iconvisible" id="volume2" onclick="volumeBtn(2);">volume_off</div>
+                     <div class="material-icons iconvisible" id="mic1" onclick="micBtn(1);">mic</div>
+                     <div class="material-icons iconvisible" id="mic2" onclick="micBtn(2);">mic_off</div>
+                     <div class="material-icons iconvisible" id="video1" onclick="videoBtn(1);">videocam</div>
+                     <div class="material-icons iconvisible" id="video2" onclick="videoBtn(2);">videocam_off</div>
+                     <div class="material-icons">settings</div>
+                     <div class="material-icons" id="watch" onclick="watchview();">watch</div>
+                </div>
+
+            <div id="content">
+                <div id="who">
+                         <input type="text" id="your-name" placeholder="your-name" style="color:black;" >
+                         <button id="start-broadcasting" onclick="myFunction()" style="background-color:#009ED8;">방 만들기</button>
+
+                </div>
+                <div id="content1">
+                    <div id="videooff_view">
+                    </div>
+                    <div id="videoon_view">
+
+                    </div>
+                </div>
+
+                <div id="content2">
+
+                </div>
+
+               <div id="content3">
+                    <div class="fileview">
+
+                    </div>
+                    <div class="file">
+                        <span class="canvasmenu"><input type="file" style="color:black;" /></span>
+                    </div>
+                    <div class="canvas">
+                        <span class="canvasmenu"><button> <img src="img/pen.png" width="100%" height="70%" title="펜" /> </button></span>
+                        <span class="canvasmenu"><button><img src="img/circle.png" width="100%" height="70%" title="원"/></button></span>
+                        <span class="canvasmenu"><button><img src="img/square.png" width="100%" height="70%" title="사각형" /></button></span>
+                        <span class="canvasmenu"><button> <img src="img/neon.png" width="100%" height="70%" title="형광펜" /></button></span>
+                        <span class="canvasmenu"><button><img src="img/laser.png" width="100%" height="70%" title="레이저" /></button></span>
+                        <span class="canvasmenu"><button><img src="img/text.png" width="100%" height="70%" title="텍스트" /></button></span>
+                        <span class="canvasmenu"><button><img src="img/eraser.png" width="100%" height="70%" title="지우개"/></button></span>
+                        <span class="canvasmenu"><button><img src="img/all.png" width="100%" height="70%" title="모두 지우기" /></button></span>
+                        <span class="canvasmenu" style="padding-top:10px;">
+	                       <input id="noIndColor" name="noIndColor" value="#000000" />
+                        </span>
+                    </div>
+                </div>
+
+                <div id="content4">
+                    <div class="compilerarea">
+                        <iframe src="http://www.daum.net" style="width:100%"></iframe>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script>
+
+        // Muaz Khan     - https://github.com/muaz-khan
+        // MIT License   - https://www.webrtc-experiment.com/licence/
+        // Documentation - https://github.com/muaz-khan/WebRTC-Experiment/tree/master/websocket
+
+        var channel = location.href.replace(/\/|:|#|%|\.|\[|\]/g, '');
+        var count = 0;
+        var pub = 'pub-f986077a-73bd-4c28-8e50-2e44076a84e0';
+        var sub = 'sub-b8f4c07a-352e-11e2-bb9d-c7df1d04ae4a';
+
+        var videosContainer = document.getElementById("videooff_view") ;
+        var btnSetupNewRoom = document.getElementById('setup-new-room');
+        var roomsList = document.getElementById('rooms-list');
+
+
+        WebSocket  = PUBNUB.ws;
+
+        var websocket = new WebSocket('wss://pubsub.pubnub.com/' + pub + '/' + sub + '/' + channel);
+
+        websocket.onerror = function() {
+            //location.reload();
+        };
+
+        websocket.onclose = function() {
+            //location.reload();
+        };
+
+        websocket.push = websocket.send;
+        websocket.send = function(data) {
+            websocket.push(JSON.stringify(data));
+        };
+
+        var peer = new PeerConnection(websocket);
+        peer.onUserFound = function(userid) {
+            if (document.getElementById(userid)) return;
+            var tr = document.createElement('tr');
+            var td1 = document.createElement('td');
+            var td2 = document.createElement('td');
+
+            td1.innerHTML = userid + '방에 참여하시겠습니까?';
+
+            var button = document.createElement('button');
+            button.innerHTML = 'Join';
+            button.id = userid;
+            button.style.float = 'right';
+            button.onclick = function() {
+                button = this;
+                getUserMedia(function(stream) {
+                    peer.addStream(stream);
+                    peer.sendParticipationRequest(button.id);
+                });
+                button.disabled = true;
+            };
+            td2.appendChild(button);
+
+            tr.appendChild(td1);
+            tr.appendChild(td2);
+            roomsList.appendChild(tr);
+        };
+
+        peer.onStreamAdded = function(e) {
+            if (e.type == 'local') document.querySelector('#start-broadcasting').disabled = false;
+            var video = e.mediaElement;
+            video.setAttribute('controls', true);
+            if(count!=0){
+              video.setAttribute('id',"aaa");
+
+              video.setAttribute('width', 300);
+            }else{
+              video.setAttribute('id',"bbb");
+              video.setAttribute('width', 1300);
+
+            }
+          if(count!=0){
+              videosContainer = document.getElementById("videooff_view2") ;
+            }
+            videosContainer.insertBefore(video, videosContainer.firstChild);
+            video.play();
+            rotateVideo(video);
+            scaleVideos();
+            count +=1;
+
+        };
+
+        peer.onStreamEnded = function(e) {
+
+            var video = e.mediaElement;
+            if (video) {
+                video.style.opacity = 0;
+                rotateVideo(video);
+
+
+                setTimeout(function() {
+                    video.parentNode.removeChild(video);
+                    scaleVideos();
+                }, 1000);
+            }
+        };
+
+        document.querySelector('#start-broadcasting').onclick = function() {
+
+            this.disabled = true;
+
+            getUserMedia(function(stream) {
+                peer.addStream(stream);
+                peer.startBroadcasting();
+            });
+        };
+
+        document.querySelector('#your-name').onchange = function() {
+            peer.userid = this.value;
+        };
+
+        if (btnSetupNewRoom) btnSetupNewRoom.onclick = setupNewRoomButtonClickHandler;
+
+        function rotateVideo(video) {
+            video.style[navigator.mozGetUserMedia ? 'transform' : '-webkit-transform'] = 'rotate(0deg)';
+            setTimeout(function() {
+                video.style[navigator.mozGetUserMedia ? 'transform' : '-webkit-transform'] = 'rotate(360deg)';
+            }, 1000);
+        }
+
+        function scaleVideos() {
+        var videos;
+        var length;
+        var video;
+            var windowHeight=2500;
+              var windowWidth=5200;
+        if(count!=0){
+            videos = document.getElementById("aaa"),
+              length = videos.length,
+              video;
+
+            windowWidth = 500;
+            windowHeight = 500;
+
+          }else{
+                videos = document.querySelectorAll('bbb'),
+                length = videos.length,
+                video;
+
+                windowHeight = 2700;
+                 windowWidth = 1500;
+
+          }
+
+
+
+          var minus = 130;
+          var windowAspectRatio = windowWidth / windowHeight;
+          var videoAspectRatio = 4 / 3;
+          var blockAspectRatio;
+          var tempVideoWidth = 0;
+          var maxVideoWidth = 0;
+
+          for (var i = length; i > 0; i--) {
+              blockAspectRatio = i * videoAspectRatio / Math.ceil(length / i);
+              if (blockAspectRatio <= windowAspectRatio) {
+                  tempVideoWidth = videoAspectRatio * windowHeight / Math.ceil(length / i);
+              } else {
+                  tempVideoWidth = windowWidth / i;
+              }
+              if (tempVideoWidth > maxVideoWidth)
+                  maxVideoWidth = tempVideoWidth;
+          }
+          for (var i = 0; i < length; i++) {
+              video = videos[i];
+              if (video)
+                  video.width = maxVideoWidth - minus;
+          }
+      }
+
+        window.onresize = scaleVideos;
+
+        // you need to capture getUserMedia yourself!
+        function getUserMedia(callback) {
+            var hints = {
+                audio: true,
+                video: {
+                    optional: [],
+                    mandatory: {}
+                }
+            };
+            navigator.getUserMedia(hints, function(stream) {
+                var video = document.createElement('video');
+                video.src = URL.createObjectURL(stream);
+                video.controls = true;
+                video.muted = true;
+
+                peer.onStreamAdded({
+                    mediaElement: video,
+                    userid: 'self',
+                    stream: stream
+                });
+
+                callback(stream);
+            });
+        }
+
+        (function() {
+            var uniqueToken = document.getElementById('unique-token');
+            if (uniqueToken)
+                if (location.hash.length > 2) uniqueToken.parentNode.parentNode.parentNode.innerHTML = '<h2 style="text-align:center;"><a href="' + location.href + '" target="_blank">Share this link</a></h2>';
+                else uniqueToken.innerHTML = uniqueToken.parentNode.parentNode.href = '#' + (Math.random() * new Date().getTime()).toString(36).toUpperCase().replace(/\./g, '-');
+        })();
+
+    </script>
+
+
+
+</body>
+</html>

@@ -1,0 +1,432 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="">
+    <meta name="author" content="">
+
+    <title>CEDU</title>
+
+    <!-- Bootstrap Core CSS -->
+    <link href="vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+
+    <!-- Custom Fonts -->
+    <link href="vendor/font-awesome/css/font-awesome.min.css" rel="stylesheet" type="text/css">
+    <link href="https://fonts.googleapis.com/css?family=Montserrat:400,700" rel="stylesheet" type="text/css">
+    <link href='https://fonts.googleapis.com/css?family=Kaushan+Script' rel='stylesheet' type='text/css'>
+    <link href='https://fonts.googleapis.com/css?family=Droid+Serif:400,700,400italic,700italic' rel='stylesheet' type='text/css'>
+    <link href='https://fonts.googleapis.com/css?family=Roboto+Slab:400,100,300,700' rel='stylesheet' type='text/css'>
+
+    <!-- Theme CSS -->
+    <link href="css/agency.css" rel="stylesheet">
+    <link href="css/main.css" rel="stylesheet">
+    <link rel="stylesheet" href="css/jquery-ui.min.css" />
+
+    <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
+    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+    <!--[if lt IE 9]>
+        <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js" integrity="sha384-0s5Pv64cNZJieYFkXYOTId2HMA2Lfb6q2nAcx2n0RTLUnCAoTTsS0nKEO27XyKcY" crossorigin="anonymous"></script>
+        <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js" integrity="sha384-ZoaMbDF+4LeFxg6WdScQ9nnR1QC2MIRxA1O9KWEXQwns1G8UNyIEZIQidzb0T1fo" crossorigin="anonymous"></script>
+    <![endif]-->
+
+</head>
+
+<body id="page-top" class="index">
+    <!-- Navigation -->
+    <nav id="mainNav" class="navbar navbar-default navbar-custom navbar-fixed-top">
+        <div class="container">
+            <!-- Brand and toggle get grouped for better mobile display -->
+<% if(user) { %>
+            <div class="topoftop">
+                <div class="topoftopmenu">
+                  <ul class="menuList">
+                        <a href="/edit"><span class="topoftopmenupadding"><%=user.username%>(<%=user.role%>)님 환영합니다.</span></a>
+                        <span class="topoftopmenupadding"><a href="/logout">[Logout]</a></span>
+                  </ul>
+                </div>
+            </div>
+<% } %>
+            <div class="navbar-header page-scroll">
+
+                <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1">
+                    <span class="sr-only">Toggle navigation</span> Menu <i class="fa fa-bars"></i>
+                </button>
+                <a class="navbar-brand page-scroll" href="#page-top">CEDU</a>
+            </div>
+
+            <!-- Collect the nav links, forms, and other content for toggling -->
+            <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+                <ul class="nav navbar-nav navbar-right">
+                    <li>
+                        <a class="page-scroll" href="#home">Home</a>
+                    </li>
+                    <li>
+                        <a class="page-scroll" href="#services">Services</a>
+                    </li>
+		    <!--
+                    <li>
+                        <a class="page-scroll" href="#team">Team</a>
+                    </li>
+		    -->
+                    <!-- id="contactSpan" -->
+                    <li>
+                        <a class="page-scroll" href="#contact">Contact</a>
+                    </li>
+                </ul>
+            </div>
+            <!-- Contact div -->
+            <div id="contactform">
+                <div class="contactinputarea">
+                    <div class="contactTitle">
+                        Contact
+                    </div>
+
+                    <div class="contactInput">
+                        <input type="text" placeholder="E-Mail" style="width:250px; height:35px; font-size:18px; color:black;">
+                    </div>
+                    <div class="contactInput">
+                        <input type="text" placeholder="Name" style="width:250px; height:35px; font-size:18px; color:black;">
+                    </div>
+                    <div class="contactInput">
+                        <input type="text" placeholder="Phone number" style="width:250px; height:35px; font-size:18px; color:black;">
+                    </div>
+                    <div class="contactInput">
+                       <textarea rows="5" placeholder="Message" id="message" style="width:250px; height:100px; font-size:18px; color:black;"></textarea>
+                    </div>
+                    <div class="forbtnpadding">
+                       <button type="submit" class="contactBtn">Send</button>
+                    </div>
+                    <div class="forbtnpadding">
+                       <button id="closeBtn" class="contactBtn">Close</button>
+                    </div>
+                </div>
+            </div>
+
+
+            <!-- /.navbar-collapse -->
+        </div>
+        <!-- /.container-fluid -->
+    </nav>
+
+    <!-- Header -->
+    <header id="home">
+        <div class="container">
+            <div class="intro-text">
+               <div class="intro-heading">C E D U</div>
+                <!-- <div class="intro-lead-in" style="color:#fed136;">Everywhere, Everyday, Everyone</div> -->
+
+                <div id="opacitybox">
+                   <div class="left"></div>
+                   <% if(user) { %>
+                     <% if(user.role == 'Mentor') { %>
+                       <!-- Metor view -->
+                     <div class="loginbox">
+                        <div class="channelTitle">
+                            <span>서비스를 시작하세요.</span>
+                        </div>
+                        <div class="purpose">
+                             <div class="selectPurpose">
+                                 <input type="radio" id="p1" name="p"/><label for="p1">코딩</label>
+                                 <input type="radio" id="p2" name="p"/><label for="p2">면접</label>
+                                 <input type="radio" id="p3" name="p"/><label for="p3">교육</label>
+                                 <input type="radio" id="p4" name="p"/><label for="p4">기타</label>
+                             </div>
+                        </div>
+<form action="/service" method="get" target="_new" >
+                        <div class="channelarea">
+                            <div class="inputarea">
+                                    <input type="text" class="form-control" id="username" name="servicename" placeholder="Channel" value="<%=user.username%>" style="width:100%; height:50px;" disabled >
+                            </div>
+                            <div class="btnarea">
+                               <input type="submit" class="form-control submitbtn" id="usrname" placeholder="ID" style="width:100%; height:50px;" value="서비스 시작">
+                            </div>
+                       </div>
+  </form>
+                 </div>
+
+                 <!-- Mentee view -->
+                 <% } else if(user.role == 'Mentee'){  %>
+                   <div class="loginbox">
+                     <div class="channelTitle">
+                         <span>서비스를 시작하세요.</span>
+                     </div>
+		  <form action="/service" method="get" target="_new">
+                      <div class="channelarea">
+                          <div class="inputarea">
+                                  <input type="text" class="form-control" id="username" name="servicename" placeholder="Channel" style="width:100%; height:50px;" value="<%=user.username%>" disabled >
+                          </div>
+                          <div class="btnarea">
+                               <input type="submit" class="form-control submitbtn" id="usrname" placeholder="ID" style="width:100%; height:50px;" value="입장">
+                          </div>
+                    </div>
+		  </form>
+               </div>
+                   <% } %>
+                  <% } else { %>
+                    <div class="loginbox">
+                       <div class="title">
+                           <span class="glyphicon glyphicon-lock"><bold>Login</bold></span>
+                       </div>
+
+                      <form action="/login" method="post">
+                       <div class="loginarea">
+                           <div class="inputarea">
+                              <div class="inputstyle">
+                                   <input type="text" class="form-control" id="username" placeholder="ID" style="width:100%; height:50px;" name="username">
+                                   <input type="password" class="form-control" id="password" placeholder="Password" style="width:100%; height:50px;" name="password">
+                               </div>
+                           </div>
+                           <div class="btnarea">
+                                <input type="submit" class="form-control submitbtn" id="usrname" placeholder="ID" style="width:100%; height:110px;" value="LOGIN">
+                           </div>
+                     </div>
+                   </form>
+                        <div class="" style="padding: 10px 0px;">
+                            <a><span id="" style="cursor:pointer" class="finduser" data-toggle="modal" data-target="#myModal">회원가입</span></a>
+                        </div>
+                </div>
+              <% } %>
+                <div class="right"></div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Services Section -->
+    <section id="services">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-12 text-center">
+                    <h2 class="section-heading">Services</h2>
+                </div>
+            </div>
+            <div class="row text-center">
+                <div class="col-md-4">
+                    <span class="fa-stack fa-4x">
+                        <i class="fa fa-circle fa-stack-2x text-primary"></i>
+                        <i class="fa fa-stack-1x fa-inverse"><img src="img/main/monitor.png" width="70px" height="50px" /></i>
+                    </span>
+                    <h4 class="service-heading">화상채팅(Video Chat)</h4>
+                    <p class="text-muted">WebRTC기반으로 Active-X나 Plug-in 없이 영상미팅을 할 수 있습니다.</p>
+                </div>
+                <div class="col-md-4">
+                    <span class="fa-stack fa-4x">
+                        <i class="fa fa-stack-1x fa-inverse"><img src="img/main/mainshare.png" width="100px" height="100px" /></i>
+                    </span>
+                    <h4 class="service-heading">화면공유(Screen Sharing)</h4>
+                    <p class="text-muted">사용자의 화면을 공유할 수 있습니다.</p>
+                </div>
+		
+                <div class="col-md-4">
+                    <span class="fa-stack fa-4x">
+                        <i class="fa fa-stack-1x fa-inverse"><img src="img/main/maincompiler.png" width="120px" height="120px" /></i>
+                    </span>
+                    <h4 class="service-heading">웹 컴파일러(Web Compiler)</h4>
+                    <p class="text-muted">실시간 코딩 교육을 위해 컴파일러를 지원합니다.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+
+    <!-- Team Section -->
+    <!--
+    <section id="team" class="bg-light-gray">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-12 text-center">
+                    <h2 class="section-heading">CEDU Team</h2>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-sm-4">
+                    <div class="team-member">
+                        <img src="img/team/1.jpg" class="img-responsive img-circle" alt="">
+                        <h4>엄준열 멘토</h4>
+                        <p class="text-muted">LG</p>
+                    
+                        <ul class="list-inline social-buttons">
+                            <li><a href="#"><i class="fa fa-twitter"></i></a>
+                            </li>
+                            <li><a href="#"><i class="fa fa-facebook"></i></a>
+                            </li>
+                            <li><a href="#"><i class="fa fa-linkedin"></i></a>
+                            </li>
+                        </ul>
+                    
+                    </div>
+                </div>
+                <div class="col-sm-4">
+                    <div class="team-member">
+                        <img src="img/team/" class="img-responsive img-circle" alt="">
+                        <h4>심치훈 멘티</h4>
+                        <p class="text-muted">한국산업기술대학교</p>
+                    </div>
+                </div>
+                <div class="col-sm-4">
+                    <div class="team-member">
+                        <img src="img/team/" class="img-responsive img-circle" alt="">
+                        <h4>황태근 멘티</h4>
+                        <p class="text-muted">한국산업기술대학교</p>
+                    </div>
+                </div>
+                <div class="col-sm-4">
+                    <div class="team-member">
+                        <img src="img/team/" class="img-responsive img-circle" alt="">
+                        <h4>최유성</h4>
+                        <p class="text-muted">상명대학교</p>
+                    </div>
+                </div>
+                <div class="col-sm-4">
+                    <div class="team-member">
+                        <img src="img/team/" class="img-responsive img-circle" alt="">
+                        <h4>박수경</h4>
+                        <p class="text-muted">한국산업기술대학교</p>
+                    </div>
+                </div>
+                <div class="col-sm-4">
+                    <div class="team-member">
+                        <img src="img/team/" class="img-responsive img-circle" alt="">
+                        <h4>김재성</h4>
+                        <p class="text-muted">한국산업기술대학교</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+-->
+
+    <!-- Contact Section -->
+    <section id="contact">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-12 text-center">
+                    <h2 class="section-heading">Contact Us</h2>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-lg-12">
+                    <form action="/sendmail" method="post" name="sentMessage">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <input type="text" class="form-control" placeholder="Your Name *" id="name" required data-validation-required-message="Please enter your name." name="mailName">
+                                    <p class="help-block text-danger"></p>
+                                </div>
+                                <div class="form-group">
+                                    <input type="email" class="form-control" placeholder="Your Email *" id="email" required data-validation-required-message="Please enter your email address." name="mailAddress">
+                                    <p class="help-block text-danger"></p>
+                                </div>
+                                <div class="form-group">
+                                    <input type="tel" class="form-control" placeholder="Your Phone *" id="phone" required data-validation-required-message="Please enter your phone number." name="mailPhone">
+                                    <p class="help-block text-danger"></p>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <textarea class="form-control" placeholder="Your Message *" id="message" required data-validation-required-message="Please enter a message." name="mailContent"></textarea>
+                                    <p class="help-block text-danger"></p>
+                                </div>
+                            </div>
+                            <div class="clearfix"></div>
+                            <div class="col-lg-12 text-center">
+                                <div id="success"></div>
+                                <button type="submit" class="btn btn-xl">Send Message</button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <footer>
+        <div class="container">
+            <div class="row">
+                <div class="col-md-4">
+                    <span class="copyright">Copyright &copy; CEDU 2017</span>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Modal -->
+    <div class="modal fade" id="myModal" role="dialog">
+      <div class="modal-dialog">
+
+        <!-- Modal content-->
+        <div class="modal-content">
+          <div class="modal-header" style="padding:35px 50px;">
+            <button type="button" class="close" data-dismiss="modal">&times;</button>
+            <h4><span class="glyphicon glyphicon-lock"></span> 회원가입</h4>
+          </div>
+          <div class="modal-body" style="padding:40px 50px;">
+            <form role="form" action="/signup" method="post">
+              <div class="form-group">
+                <label for="usrname"><span class="glyphicon glyphicon-user"></span> Username</label>
+                <input type="text" class="form-control" id="usrname" placeholder="ID" name="username">
+              </div>
+              <div class="form-group">
+                <label for="psw"><span class="glyphicon glyphicon-eye-open"></span> Password</label>
+                <input type="password" class="form-control" id="psw" placeholder="Password" name="password">
+              </div>
+              <div class="form-group">
+                <label for="email"><span class="glyphicon glyphicon-envelope"></span> Email</label>
+                <input type="text" class="form-control" id="email" placeholder="Email" name="email">
+              </div>
+              <div class="form-group">
+                <label for="tel"><span class="glyphicon glyphicon-phone"></span> Phone</label>
+                <input type="text" class="form-control" id="tel" placeholder="Phone" name="tel">
+              </div>
+              <div class="form-group">
+                <label for="role"><span class="glyphicon glyphicon-heart"></span> Role</label>
+
+                <select id="role" name="role">
+                  <option value="Mentor">멘토</option>
+                  <option value="Mentee">멘티</option>
+                </select>
+
+              </div>
+                <button type="submit" class="btn btn-success btn-block">가입</button>
+            </form>
+          </div>
+          <div class="modal-footer">
+            <button type="submit" class="btn btn-danger btn-default pull-left" data-dismiss="modal"><span class="glyphicon glyphicon-remove"></span> Cancel</button>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- jQuery -->
+    <script src="vendor/jquery/jquery.min.js"></script>
+
+    <!-- Bootstrap Core JavaScript -->
+    <script src="vendor/bootstrap/js/bootstrap.min.js"></script>
+
+    <!-- Plugin JavaScript -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-easing/1.3/jquery.easing.min.js" integrity="sha384-mE6eXfrb8jxl0rzJDBRanYqgBxtJ6Unn4/1F7q4xRRyIw7Vdg9jP4ycT7x1iVsgb" crossorigin="anonymous"></script>
+
+    <!-- Contact Form JavaScript -->
+    <script src="js/jqBootstrapValidation.js"></script>
+    <script src="js/contact_me.js"></script>
+
+    <!-- Theme JavaScript -->
+    <script src="js/agency.min.js"></script>
+
+    <!-- Custom JavaScript -->
+    <script src="js/main.js"></script>
+
+    <script src="vendor/jquery-ui.min.js"></script>
+    <script src="http://ajax.googleapis.com/ajax/libs/jqueryui/1.10.4/i18n/jquery-ui-i18n.min.js"></script>
+    <script>
+        $(function(){
+            $('.selectPurpose').buttonset();
+        });
+    </script>
+</body>
+
+</html>

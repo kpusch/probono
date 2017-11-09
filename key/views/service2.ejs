@@ -1,0 +1,591 @@
+﻿<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>화면공유</title>
+<script>
+    if(!location.hash.replace('#', '').length) {
+        location.href = location.href.split('#')[0] + '#' + (Math.random() * 100).toString().replace('.', '');
+        location.reload();
+    }
+</script>
+
+    <link rel="stylesheet" href="css/service.css">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+    <link href="css/evol-colorpicker.min.css" rel="stylesheet" />
+    <link id="jquiCSS" rel="stylesheet" href="http://ajax.googleapis.com/ajax/libs/jqueryui/1.12.1/themes/base/jquery-ui.css" type="text/css" media="all">
+
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+    <script src="../stylesheets/vendor/jquery-3.2.1.js"></script>
+    <script src="../stylesheets/vendor/jquery-ui.min.js"></script>
+    <script src="js/service.js"></script>
+    <script src="js/evol-colorpicker.min.js" type="text/javascript"></script>
+
+
+    <script src="https://cdn.webrtc-experiment.com:443/getScreenId.js"></script>
+
+            <script src="https://cdn.webrtc-experiment.com/commits.js" async></script>
+            <script src="https://cdn.webrtc-experiment.com/view/websocket.js"> </script>
+            <script src="https://cdn.webrtc-experiment.com/websocket/PeerConnection.js"> </script>
+
+
+            <!-- scripts used for screen-sharing -->
+            <script src='https://cdn.webrtc-experiment.com/firebase.js'> </script>
+            <script src="https://cdn.webrtc-experiment.com/getScreenId.js"> </script>
+            <script src="https://cdn.webrtc-experiment.com/BandwidthHandler.js"></script>
+            <script src="https://cdn.webrtc-experiment.com/screen.js"> </script>
+    <style>
+
+    </style>
+
+
+    <script>
+        $(document).ready(function(){
+            $('#noIndColor').colorpicker({
+                displayIndicator: false
+            });
+        });
+
+        $(function() {
+            $( "#watchview" ).draggable();
+        });
+
+        function showtab(a){
+            for(i = 1 ; i <=4 ; i++){
+                var target = document.getElementById('content' + i);
+                if(i == a){
+                    target.style.display = 'block';
+                    document.getElementById("tabbtn"+i).style.backgroundColor = '#002e3f';
+                } else {
+                    target.style.display = 'none';
+                    document.getElementById("tabbtn"+i).style.backgroundColor = '#009ED8';
+                }
+            }
+        }
+
+        function watchtab(a){
+            for(i = 1 ; i <=2 ; i++){
+                var target = document.getElementById('watchcontent' + i);
+                if(i == a){
+                    target.style.display = 'block';
+                } else {
+                    target.style.display = 'none';
+                }
+            }
+        }
+
+        function volumeBtn(a){
+                var target1 = document.getElementById('volume1');
+                var target2 = document.getElementById('volume2');
+                if(a==1){
+                    target1.style.display = 'none';
+                    target2.style.display = 'inline-block';
+                }else if(a==2){
+                    target2.style.display = 'none';
+                    target1.style.display = 'inline-block';
+                }
+        }
+
+        function micBtn(a){
+                var target1 = document.getElementById('mic1');
+                var target2 = document.getElementById('mic2');
+                if(a==1){
+                    target1.style.display = 'none';
+                    target2.style.display = 'inline-block';
+                }else if(a==2){
+                    target2.style.display = 'none';
+                    target1.style.display = 'inline-block';
+                }
+        }
+
+        function videoBtn(a){
+                var target1 = document.getElementById('video1');
+                var target2 = document.getElementById('video2');
+                if(a==1){
+                    target1.style.display = 'none';
+                    target2.style.display = 'inline-block';
+                    document.getElementById("videoon_view").style.display = 'block';
+                    document.getElementById("videooff_view").style.display = 'none';
+                }else if(a==2){
+                    target2.style.display = 'none';
+                    target1.style.display = 'inline-block';
+                    document.getElementById("videooff_view").style.display = 'block';
+                    document.getElementById("videoon_view").style.display = 'none';
+                }
+        }
+
+        function watchview() {
+            var target = document.getElementById('watchview');
+            target.style.display = 'block';
+        }
+
+        function watchviewclose() {
+            var target = document.getElementById('watchview');
+            target.style.display = 'none';
+        }
+
+        function openNav() {
+            document.getElementById("mySidenav").style.width = "20%";
+            document.getElementById("wrap").style.width = "80%";
+            document.getElementById("wrap").style.marginRight = "20%";
+            document.getElementById("opensidemenu").style.display = "none";
+            document.getElementById("navout").style.display = "block";
+        }
+
+        function closeNav() {
+            document.getElementById("mySidenav").style.width = "0";
+            document.getElementById("wrap").style.marginRight = "0";
+            document.getElementById("wrap").style.width = "100%";
+            document.getElementById("opensidemenu").style.display = "block";
+            document.getElementById("navout").style.display = "none";
+        }
+
+        // Stopwatch
+        var timer, i = 0, divide = 100;
+        var check = 0;
+
+        function start(){
+             if(check == 0) {
+                timer = self.setInterval('increment()', (1000 / divide));
+                check = 1;
+                document.getElementById("start_timer").style.borderColor = "#009ED8";
+                document.getElementById("stop_timer").style.borderColor = "#FFFFFF";
+                document.getElementById("reset_timer").style.borderColor = "#FFFFFF";
+            }
+        }
+
+        function increment(){
+         i++;
+         document.getElementById('time_out').innerHTML = (i / divide);
+        }
+
+        function stop(){
+            clearInterval(timer);
+            timer = null;
+            check = 0;
+            document.getElementById("start_timer").style.borderColor = "#FFFFFF";
+            document.getElementById("stop_timer").style.borderColor = "#009ED8";
+            document.getElementById("reset_timer").style.borderColor = "#FFFFFF";
+        }
+
+        function reset(){
+            stop();
+            i = 0
+            document.getElementById('time_out').innerHTML = (i / divide);
+            document.getElementById("start_timer").style.borderColor = "#FFFFFF";
+            document.getElementById("stop_timer").style.borderColor = "#FFFFFF";
+            document.getElementById("reset_timer").style.borderColor = "#009ED8";
+        }
+    </script>
+
+
+</head>
+<body>
+    <!-- sidebar -->
+    <div id="mySidenav" class="sidenav">
+        <div class="sidecontent">
+                 <div class="userscreen">
+                    <div class="username" id="videooff_view2"></div>
+                    <div class="userview"></div>
+                </div>
+                <div class="userscreen">
+                    <div class="username" id="attend"></div>
+                    <div class="userview"></div>
+                </div>
+                <div class="userscreen">
+                    <div class="username"></div>
+                    <div class="userview"></div>
+                </div>
+                <div class="userscreen">
+                    <div class="username"></div>
+                    <div class="userview"></div>
+                </div>
+                <div class="userscreen">
+                    <div class="username"></div>
+                    <div class="userview"></div>
+                </div>
+        </div>
+    </div>
+    <!-- // -->
+
+   <!-- watch view -->
+        <div id="watchview" class="ui-widget-content">
+            <div class="watcharea">
+                <div id="watchheader">
+                    <div id="watchtabs">
+                         <ul class="nav nav-tabs">
+                            <li><a href="javascript:;" onclick="javascript:watchtab(1);" style="color:#22FF22;">Stopwatch</a></li>
+                        </ul>
+                    </div>
+                    <div id="watchclose">
+                        <a href="javascript:void(0)" onclick="watchviewclose()">&times;</a>
+                    </div>
+                </div>
+
+                <div id="watchcontent">
+                    <div id="watchcontent1">
+                        <div class="watchbox">
+                            <div class="watchshowbox">
+                                <div class="watchshowtimeleft"></div>
+                                <div class="watchshowtime">
+                                    <span id="time_out">0.00</span>
+                                </div>
+                            </div>
+                            <div class="watchbtnbox">
+                                <div class="watchbtn">
+                                    <button id="start_timer" onclick="start()">Start</button>
+                                </div>
+                                <div class="watchbtn">
+                                    <button id="stop_timer" onclick="stop()">Stop</button>
+                                </div>
+                                <div class="watchbtn">
+                                    <button id="reset_timer" onclick="reset()">Reset</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div id="watchcontent2">
+                        <div class="watchbox">
+                            <div class="watchshowbox">
+                                <div class="watchshowtimeleft">
+                                    <input type="text" style="width:100%; height:70%; color:black;" placeholder="Minutes" name="minutes" />
+                                </div>
+                                <div class="watchshowtime">
+                                    <label>00:00:00</label>
+                                </div>
+                            </div>
+                            <div class="watchbtnbox">
+                                <div class="watchbtn">
+                                    <button onclick="sw_start()">Start</button>
+                                </div>
+                                <div class="watchbtn">
+                                    <button onclick="Stop()">Stop</button>
+                                </div>
+                                <div class="watchbtn">
+                                    <button onclick="Reset()">Reset</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+
+    <!-- // -->
+
+    <div id="wrap">
+        <div id="header">
+            <div class="tabs">
+                    <span><a href="/service" target="_blank"><button id="tabbtn1">화상채팅</button></a></span>
+                    <span><a href="/service2" target="_blank"><button id="tabbtn2">화면공유</button></a></span>
+                   <!-- <span><a href="javascript:;" onclick="javascript:showtab(3);"><button id="tabbtn3">파일공유</button></a></span> -->
+                    <span><a href="http://211.253.24.236/JudgeOnline/" target="_blank"><button id="tabbtn4">컴파일러</button></a></span>
+
+
+                            <table id="rooms-list" style="rooms-list;"></table>
+            </div>
+
+            <div class="sidemenu">
+                <div id="navout">
+                   <button onclick="closeNav()" style="width:100%;"><span class="glyphicon glyphicon-remove" style="font-size:2vw;cursor:pointer"></span></button>
+                </div>
+                <div id="out">
+                    <button style="width:100%;"><span class="glyphicon glyphicon-log-out" style="font-size:2vw;cursor:pointer"></span></button>
+                </div>
+                <div id="opensidemenu">
+                    <button onclick="openNav()" style="width:100%;"><span class="glyphicon glyphicon-user" style="font-size:2vw;cursor:pointer"></span></button>
+                </div>
+            </div>
+
+        </div>
+
+        <div id="contentbox">
+                <div id="settings">
+                     <div class="material-icons iconvisible" id="volume1" onclick="volumeBtn(1);">volume_up</div>
+                     <div class="material-icons iconvisible" id="volume2" onclick="volumeBtn(2);">volume_off</div>
+                     <div class="material-icons iconvisible" id="mic1" onclick="micBtn(1);">mic</div>
+                     <div class="material-icons iconvisible" id="mic2" onclick="micBtn(2);">mic_off</div>
+                     <div class="material-icons iconvisible" id="video1" onclick="videoBtn(1);">videocam</div>
+                     <div class="material-icons iconvisible" id="video2" onclick="videoBtn(2);">videocam_off</div>
+                     <div class="material-icons">settings</div>
+                     <div class="material-icons" id="watch" onclick="watchview();">watch</div>
+                </div>
+
+            <div id="content">
+                <div id="who">
+                                      <input type="text" id="your-name" placeholder="your-name" style="color:black;">
+                                          <button id="share-screen" style="background-color:#009ED8;">화면 공유채널만들기</button>
+                </div>
+                <div id="content1">
+                    <div id="videooff_view">
+                    </div>
+                    <div id="videoon_view">
+
+                    </div>
+                </div>
+
+                <div id="content2">
+                    <img src="img/1.PNG" width="100%" height="100%" />
+                </div>
+
+                <div id="content3">
+                    <div class="fileview">
+
+                    </div>
+                    <div class="file">
+                        <span class="canvasmenu"><input type="file" style="color:black;" /></span>
+                    </div>
+                    <div class="canvas">
+                        <span class="canvasmenu"><button> <img src="img/pen.png" width="100%" height="70%" title="펜" /> </button></span>
+                        <span class="canvasmenu"><button><img src="img/circle.png" width="100%" height="70%" title="원"/></button></span>
+                        <span class="canvasmenu"><button><img src="img/square.png" width="100%" height="70%" title="사각형" /></button></span>
+                        <span class="canvasmenu"><button> <img src="img/neon.png" width="100%" height="70%" title="형광펜" /></button></span>
+                        <span class="canvasmenu"><button><img src="img/laser.png" width="100%" height="70%" title="레이저" /></button></span>
+                        <span class="canvasmenu"><button><img src="img/text.png" width="100%" height="70%" title="텍스트" /></button></span>
+                        <span class="canvasmenu"><button><img src="img/eraser.png" width="100%" height="70%" title="지우개"/></button></span>
+                        <span class="canvasmenu"><button><img src="img/all.png" width="100%" height="70%" title="모두 지우기" /></button></span>
+                        <span class="canvasmenu" style="padding-top:10px;">
+	                       <input id="noIndColor" name="noIndColor" value="#000000" />
+                        </span>
+                    </div>
+                </div>
+
+                <div id="content4">
+                    <div class="compilerarea">
+                        <iframe src="http://www.daum.net"></iframe>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+                <script>
+                    function intallFirefoxScreenCapturingExtension() {
+                        InstallTrigger.install({
+                            'Foo': {
+                                // URL: 'https://addons.mozilla.org/en-US/firefox/addon/enable-screen-capturing/',
+                                URL: 'https://addons.mozilla.org/firefox/downloads/file/355418/enable_screen_capturing_in_firefox-1.0.006-fx.xpi?src=cb-dl-hotness',
+                                toString: function() {
+                                    return this.URL;
+                                }
+                            }
+                        });
+                    }
+
+                    // Muaz Khan     - https://github.com/muaz-khan
+                    // MIT License   - https://www.webrtc-experiment.com/licence/
+                    // Documentation - https://github.com/muaz-khan/WebRTC-Experiment/tree/master/screen-sharing
+
+                    var videosContainer = document.getElementById("videooff_view") ;
+                  
+                    var roomsList = document.getElementById('rooms-list');
+
+                    var screensharing = new Screen();
+
+                    screensharing.onscreen = function(_screen) {
+                        var alreadyExist = document.getElementById(_screen.userid);
+                        if (alreadyExist) return;
+
+                        if (typeof roomsList === 'undefined') roomsList = document.body;
+
+                        var tr = document.createElement('tr');
+
+                        tr.id = _screen.userid;
+                        tr.innerHTML = '<td>' + _screen.userid + '의 화면을 공유하시겠습니까?.</td>' +
+                                '<td><button class="join">화면 공유하기</button></td>';
+                        roomsList.insertBefore(tr, roomsList.firstChild);
+
+                        var button = tr.querySelector('.join');
+                        button.setAttribute('data-userid', _screen.userid);
+                        button.setAttribute('data-roomid', _screen.roomid);
+                        button.onclick = function() {
+                            var button = this;
+                            button.disabled = true;
+
+                            var _screen = {
+                                userid: button.getAttribute('data-userid'),
+                                roomid: button.getAttribute('data-roomid')
+                            };
+                            screensharing.view(_screen);
+                        };
+                    };
+
+                    // on getting each new screen
+                    screensharing.onaddstream = function(media) {
+                        media.video.id = media.userid;
+
+                        var video = media.video;
+                        video.setAttribute('controls', true);
+                        videosContainer.insertBefore(video, videosContainer.firstChild);
+                        video.play();
+                        rotateVideo(video);
+                    };
+
+                    // using firebase for signaling
+                    // screen.firebase = 'signaling';
+
+                    // if someone leaves; just remove his screen
+                    screensharing.onuserleft = function(userid) {
+                        var video = document.getElementById(userid);
+                        if (video && video.parentNode) video.parentNode.removeChild(video);
+                    };
+
+                    // check pre-shared screens
+                    screensharing.check();
+
+                    document.getElementById('share-screen').onclick = function() {
+                      screensharing.share();
+                        this.disabled = true;
+                    };
+
+                    document.getElementById('share-screen').onclick = function() {
+                        var username = document.getElementById('your-name');
+                        username.disabled = this.disabled = true;
+
+                        screensharing.isModerator = true;
+                        screensharing.userid = username.value;
+
+                        screensharing.share();
+                    };
+
+                    function rotateVideo(video) {
+                        video.style[navigator.mozGetUserMedia ? 'transform' : '-webkit-transform'] = 'rotate(0deg)';
+                        setTimeout(function() {
+                            video.style[navigator.mozGetUserMedia ? 'transform' : '-webkit-transform'] = 'rotate(360deg)';
+                        }, 1000);
+                    }
+
+                    (function() {
+                        var uniqueToken = document.getElementById('unique-token');
+                        if (uniqueToken)
+                            if (location.hash.length > 2) uniqueToken.parentNode.parentNode.parentNode.innerHTML = '<h2 style="text-align:center;"><a href="' + location.href + '" target="_blank">Share this link</a></h2>';
+                            else uniqueToken.innerHTML = uniqueToken.parentNode.parentNode.href = '#' + (Math.random() * new Date().getTime()).toString(36).toUpperCase().replace( /\./g , '-');
+                    })();
+
+                    screensharing.onNumberOfParticipantsChnaged = function(numberOfParticipants) {
+                        if(!screensharing.isModerator) return;
+
+                        document.title = numberOfParticipants + ' users are viewing your screen!';
+                        var element = document.getElementById('number-of-participants');
+                        if (element) {
+                            element.innerHTML = numberOfParticipants + ' users are viewing your screen!';
+                        }
+                    };
+                </script>
+
+                <script>
+                    // todo: need to check exact chrome browser because opera also uses chromium framework
+                    var isChrome = !!navigator.webkitGetUserMedia;
+
+                    // DetectRTC.js - https://github.com/muaz-khan/WebRTC-Experiment/tree/master/DetectRTC
+                    // Below code is taken from RTCMultiConnection-v1.8.js (http://www.rtcmulticonnection.org/changes-log/#v1.8)
+                    var DetectRTC = {};
+
+                    (function () {
+
+                        var screenCallback;
+
+                        DetectRTC.screen = {
+                            chromeMediaSource: 'screen',
+                            getSourceId: function(callback) {
+                                if(!callback) throw '"callback" parameter is mandatory.';
+                                screenCallback = callback;
+                                window.postMessage('get-sourceId', '*');
+                            },
+                            isChromeExtensionAvailable: function(callback) {
+                                if(!callback) return;
+
+                                if(DetectRTC.screen.chromeMediaSource == 'desktop') return callback(true);
+
+                                // ask extension if it is available
+                                window.postMessage('are-you-there', '*');
+
+                                setTimeout(function() {
+                                    if(DetectRTC.screen.chromeMediaSource == 'screen') {
+                                        callback(false);
+                                    }
+                                    else callback(true);
+                                }, 2000);
+                            },
+                            onMessageCallback: function(data) {
+                                if (!(typeof data == 'string' || !!data.sourceId)) return;
+
+                                console.log('chrome message', data);
+
+                                // "cancel" button is clicked
+                                if(data == 'PermissionDeniedError') {
+                                    DetectRTC.screen.chromeMediaSource = 'PermissionDeniedError';
+                                    if(screenCallback) return screenCallback('PermissionDeniedError');
+                                    else throw new Error('PermissionDeniedError');
+                                }
+
+                                // extension notified his presence
+                                if(data == 'rtcmulticonnection-extension-loaded') {
+                                    if(document.getElementById('install-button')) {
+                                        document.getElementById('install-button').parentNode.innerHTML = '<strong>Great!</strong> <a href="https://chrome.google.com/webstore/detail/screen-capturing/ajhifddimkapgcifgcodmmfdlknahffk" target="_blank">Google chrome extension</a> is installed.';
+                                    }
+                                    DetectRTC.screen.chromeMediaSource = 'desktop';
+                                }
+
+                                // extension shared temp sourceId
+                                if(data.sourceId) {
+                                    DetectRTC.screen.sourceId = data.sourceId;
+                                    if(screenCallback) screenCallback( DetectRTC.screen.sourceId );
+                                }
+                            },
+                            getChromeExtensionStatus: function (callback) {
+                                if (!!navigator.mozGetUserMedia) return callback('not-chrome');
+
+                                var extensionid = 'ajhifddimkapgcifgcodmmfdlknahffk';
+
+                                var image = document.createElement('img');
+                                image.src = 'chrome-extension://' + extensionid + '/icon.png';
+                                image.onload = function () {
+                                    DetectRTC.screen.chromeMediaSource = 'screen';
+                                    window.postMessage('are-you-there', '*');
+                                    setTimeout(function () {
+                                        if (!DetectRTC.screen.notInstalled) {
+                                            callback('installed-enabled');
+                                        }
+                                    }, 2000);
+                                };
+                                image.onerror = function () {
+                                    DetectRTC.screen.notInstalled = true;
+                                    callback('not-installed');
+                                };
+                            }
+                        };
+
+                        // check if desktop-capture extension installed.
+                        if(window.postMessage && isChrome) {
+                            DetectRTC.screen.isChromeExtensionAvailable();
+                        }
+                    })();
+
+                    DetectRTC.screen.getChromeExtensionStatus(function(status) {
+                        if(status == 'installed-enabled') {
+                            if(document.getElementById('install-button')) {
+                                document.getElementById('install-button').parentNode.innerHTML = '<strong>Great!</strong> <a href="https://chrome.google.com/webstore/detail/screen-capturing/ajhifddimkapgcifgcodmmfdlknahffk" target="_blank">Google chrome extension</a> is installed.';
+                            }
+                            DetectRTC.screen.chromeMediaSource = 'desktop';
+                        }
+                    });
+
+                    window.addEventListener('message', function (event) {
+                        if (event.origin != window.location.origin) {
+                            return;
+                        }
+
+                        DetectRTC.screen.onMessageCallback(event.data);
+                    });
+
+                    console.log('current chromeMediaSource', DetectRTC.screen.chromeMediaSource);
+                </script>
+
+
+</body>
+</html>
